@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -239,18 +240,24 @@ public class WxMsgUtil {
      * }
      * }
      */
-    public static Map<String, Object> createNewsMsg(String touser, String toparty, String totag, String title,
-                                                    String url, String description, String picurl, String btntxt) {
+    public static Map<String, Object> createNewsMsg(String touser, String toparty, String totag, List<Map<String, Object>> newsArticles) {
 
         Map<String, Object> news = new HashMap<>();
-        news.put("title", title);
-        news.put("url", url);
-        news.put("description", description);
-        news.put("picurl", picurl);
-        news.put("btntxt", btntxt);
+        news.put("articles", newsArticles);
         Map<String, Object> map = createMsg(touser, toparty, totag, "news", agentid, news, 0);
         map.remove("safe");
         return map;
+    }
+
+    public static Map<String, Object> createNewsArticleMap(String title, String description, String url, String picurl, String btntxt) {
+
+        Map<String, Object> article = new HashMap<>();
+        article.put("title", title);
+        article.put("description", description);
+        article.put("url", url);
+        article.put("picurl", picurl);
+        article.put("btntxt", btntxt);
+        return article;
     }
 
     /**
@@ -278,38 +285,23 @@ public class WxMsgUtil {
      * "safe":0
      * }
      */
-    public static Map<String, Object> createTextMsg(String touser, String toparty, String totag, String media_id, Integer safe) {
+    public static Map<String, Object> createMpnewsMsg(String touser, String toparty, String totag, List<Map<String, Object>> mpnewsArticles, Integer safe) {
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("touser", touser);
-        map.put("toparty", toparty);
-        map.put("totag", totag);
-        map.put("msgtype", "video");
-        map.put("agentid", agentid);
-        Map<String, String> image = new HashMap<>();
-        image.put("media_id", media_id);
-        image.put("title", title);
-        image.put("description", description);
-        map.put("video", image);
-
-        return map;
+        Map<String, Object> mpnews = new HashMap<>();
+        mpnews.put("articles", mpnewsArticles);
+        return createMsg(touser, toparty, totag, "mpnews", agentid, mpnews, safe);
     }
 
-    public static Map<String, Object> createTextMsg(String touser, String toparty, String totag, String media_id, Integer safe) {
+    public static Map<String, Object> createMpnewsArticleMap(String title, String thumb_media_id, String author, String content_source_url, String content, String digest) {
 
-        Map<String, Object> map = new HashMap<>();
-        map.put("touser", touser);
-        map.put("toparty", toparty);
-        map.put("totag", totag);
-        map.put("msgtype", "video");
-        map.put("agentid", agentid);
-        Map<String, String> image = new HashMap<>();
-        image.put("media_id", media_id);
-        image.put("title", title);
-        image.put("description", description);
-        map.put("video", image);
-
-        return map;
+        Map<String, Object> article = new HashMap<>();
+        article.put("title", title);
+        article.put("thumb_media_id", thumb_media_id);
+        article.put("author", author);
+        article.put("content_source_url", content_source_url);
+        article.put("content", content);
+        article.put("digest", digest);
+        return article;
     }
 
     /**
@@ -349,20 +341,33 @@ public class WxMsgUtil {
      * }
      * }
      */
-    public static Map<String, Object> createTextMsg(String touser, String toparty, String totag, String media_id, Integer safe) {
+    public static Map<String, Object> createMiniprogramNotice(String touser, String toparty, String totag, String appid,
+                                                              String page, String title, String description,
+                                                              Boolean emphasis_first_item, List<Map<String, Object>> content_item) {
 
         Map<String, Object> map = new HashMap<>();
         map.put("touser", touser);
         map.put("toparty", toparty);
         map.put("totag", totag);
-        map.put("msgtype", "video");
-        map.put("agentid", agentid);
-        Map<String, String> image = new HashMap<>();
-        image.put("media_id", media_id);
-        image.put("title", title);
-        image.put("description", description);
-        map.put("video", image);
+        map.put("msgtype", "miniprogram_notice");
 
+        Map<String, Object> notice = new HashMap<>();
+        notice.put("appid", appid);
+        notice.put("page", page);
+        notice.put("title", title);
+        notice.put("description", description);
+        notice.put("emphasis_first_item", emphasis_first_item);
+        notice.put("content_item", content_item);
+
+        map.put("miniprogram_notice", notice);
+
+        return map;
+    }
+
+    public static Map<String, String> createContentItemMap(String key, String value) {
+        Map<String, String> map = new HashMap<>();
+        map.put("key", key);
+        map.put("value", value);
         return map;
     }
 
